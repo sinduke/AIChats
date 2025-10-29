@@ -12,15 +12,9 @@ struct AppView: View {
     var body: some View {
         AppViewBuilder(
             showTabbar: showTabbar) {
-                ZStack {
-                    Color.blue.ignoresSafeArea()
-                    Text("Main App View with Tabbar")
-                }
+                TabbarView()
             } onboardingView: {
-                ZStack {
-                    Color.green.ignoresSafeArea()
-                    Text("Onboarding View without Tabbar")
-                }
+                WelcomeView()
             }
         .onTapGesture {
             showTabbar.toggle()
