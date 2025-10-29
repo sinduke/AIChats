@@ -19,4 +19,18 @@ extension View {
             .cornerRadius(16)
     }
     
+    func tappableBackground() -> some View {
+        self
+            .background(Color.black.opacity(0.0001))
+            .contentShape(Rectangle())
+    }
+    
+    func tappableBackground(action: @escaping () -> Void) -> some View {
+        self
+            .padding(8) // ✅ 扩大可点区域
+            .background(Color.black.opacity(0.0001)) // ✅ 可点背景
+            .contentShape(Rectangle()) // ✅ 明确点击形状
+            .onTapGesture(perform: action)
+    }
+    
 }
