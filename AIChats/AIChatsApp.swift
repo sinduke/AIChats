@@ -11,7 +11,7 @@ import SwiftUI
 struct AIChatsApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppView()
         }
     }
 }
