@@ -21,7 +21,7 @@ struct ColorView: View {
         .safeAreaInset(edge: .bottom, alignment: .center, spacing: nil, content: {
             ZStack {
                 if let selectedColor {
-                    ctaButton
+                    ctaButton(selectedColor: selectedColor)
                         .transition(AnyTransition.opacity.combined(with: .move(edge: .bottom)))
                         .padding(24)
                         .background(.ultraThinMaterial)
@@ -31,9 +31,9 @@ struct ColorView: View {
         .animation(.smooth, value: selectedColor)
     }
     
-    private var ctaButton: some View {
+    private func ctaButton(selectedColor: Color) -> some View {
         NavigationLink {
-            CompletedView()
+            CompletedView(selectedColor: selectedColor)
         } label: {
             Text("Continue")
                 .callToActionButton()
@@ -68,5 +68,8 @@ struct ColorView: View {
 }
 
 #Preview {
-    ColorView()
+    NavigationStack {
+        ColorView()
+    }
+    .environment(AppState())
 }
