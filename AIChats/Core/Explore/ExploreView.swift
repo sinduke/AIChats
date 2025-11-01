@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct ExploreView: View {
+    let avatar: AvatarModel = AvatarModel.mock
     var body: some View {
         NavigationStack {
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+            HeroCellView(title: avatar.name, subtitle: avatar.characterDescription, image: avatar.profileImageName)
+                .frame(height: 200)
                 .navigationTitle("Explore")
                 .navigationBarTitleDisplayMode(.inline)
         }
