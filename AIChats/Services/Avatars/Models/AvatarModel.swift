@@ -114,7 +114,7 @@ struct AvatarDescriptionBuilder {
     
 }
 
-enum CharacterOption {
+enum CharacterOption: String, CaseIterable, Hashable {
     case man, woman, cat, dog, alien
     
     static var `default`: Self {

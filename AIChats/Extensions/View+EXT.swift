@@ -33,4 +33,23 @@ extension View {
             .onTapGesture(perform: action)
     }
     
+    func removeListRowFormatting() -> some View {
+        self
+//            .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+            .listRowInsets(EdgeInsets())
+//            .listSectionMargins(.all, 0)
+            .listRowBackground(Color.clear)
+//            .listRowSeparator(.hidden)
+    }
+    
+    func addingGradientBackgroundForText() -> some View {
+        background(
+            LinearGradient(colors: [
+                .black.opacity(0.1),
+                .black.opacity(0.3),
+                .black.opacity(0.4)
+            ], startPoint: .top, endPoint: .bottom)
+        )
+    }
+    
 }
