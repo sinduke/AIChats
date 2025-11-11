@@ -44,18 +44,18 @@ struct CompletedView: View {
     
     // MARK: -- Views
     private var ctaButton: some View {
-        Button {
-            onFinishedButtonTapped()
-        } label: {
-            ZStack {
-                if isCompletedProfileSetup {
-                    ProgressView()
-                        .tint(.white)
-                } else {
-                    Text("Finished")
-                }
+        
+        ZStack {
+            if isCompletedProfileSetup {
+                ProgressView()
+                    .tint(.white)
+            } else {
+                Text("Finished")
             }
-            .callToActionButton()
+        }
+        .callToActionButton()
+        .anyButton(.pressable) {
+            onFinishedButtonTapped()
         }
         .disabled(isCompletedProfileSetup)
     }

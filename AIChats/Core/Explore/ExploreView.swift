@@ -9,15 +9,16 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    let avatar: AvatarModel = AvatarModel.mock
     @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
     @State private var categories: [CharacterOption] = CharacterOption.allCases
+    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
     
     var body: some View {
         NavigationStack {
             List {
                 featuredSection
                 categoriesSection
+                popularSection
             }
             .navigationTitle("Explore")
         }
@@ -32,9 +33,12 @@ struct ExploreView: View {
                     subtitle: avatar.characterDescription,
                     image: avatar.profileImageName
                 )
+                .anyButton {
+                    // Handle avatar selection
+                }
             }
         } header: {
-            Text("featured avatars".capitalized)
+            Text("featured".capitalized)
         }
         .removeListRowFormatting()
     }
@@ -49,6 +53,9 @@ struct ExploreView: View {
                                 title: category.rawValue.capitalized,
                                 imageName: Constants.randomImageURL
                             )
+                            .anyButton {
+                                // Handle category selection
+                            }
                         }
                     }
                 }
@@ -59,6 +66,24 @@ struct ExploreView: View {
             }
         } header: {
             Text("categories".capitalized)
+        }
+        .removeListRowFormatting()
+    }
+    
+    private var popularSection: some View {
+        Section {
+            ForEach(popularAvatars, id: \.self) { avatar in
+                CustomListCellView(
+                    imageName: avatar.profileImageName,
+                    title: avatar.name,
+                    subtitle: avatar.characterDescription
+                )
+                .anyButton(.highlight) {
+                    // Handle avatar selection
+                }
+            }
+        } header: {
+            Text("popular".capitalized)
         }
         .removeListRowFormatting()
     }
