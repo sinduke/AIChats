@@ -12,7 +12,19 @@ struct ChatsView: View {
     var body: some View {
         NavigationStack {
             List(chats) { chat in
-                /*@START_MENU_TOKEN@*/Text(chat.id)/*@END_MENU_TOKEN@*/
+                ChatRowCellViewBuilder(
+                    currentUserID: nil, // FIXME: - Pass current user ID here
+                    chat: chat) {
+                        try? await Task.sleep(for: .seconds(2))
+                        return .mocks.randomElement()!
+                    } getLastChatMessage: {
+                        try? await Task.sleep(for: .seconds(2))
+                        return .mocks.randomElement()!
+                    }
+                    .anyButton(.highlight, action: {
+                        // Handle chat selection
+                    })
+                    .removeListRowFormatting()
             }
             .navigationTitle("Chats")
         }
