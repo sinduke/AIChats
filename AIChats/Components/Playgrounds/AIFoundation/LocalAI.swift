@@ -27,4 +27,5 @@ import MapKit
     let latitude = 37.768552
     let longitude = -122.481616
     let location = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    print(location)
 }

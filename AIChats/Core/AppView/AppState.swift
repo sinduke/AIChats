@@ -9,7 +9,11 @@ import SwiftUI
 
 @Observable
 class AppState {
-    private(set) var showTabbar: Bool
+    private(set) var showTabbar: Bool {
+        didSet {
+            UserDefaults.showTabbarView = showTabbar
+        }
+    }
     init(showTabbar: Bool = UserDefaults.showTabbarView) {
         self.showTabbar = showTabbar
     }
