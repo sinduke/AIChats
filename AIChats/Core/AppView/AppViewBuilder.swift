@@ -15,10 +15,10 @@ struct AppViewBuilder<TabbarView: View, OnboardingView: View>: View {
         ZStack {
             if showTabbar {
                 tabbarView
-                    .transition(.move(edge: .trailing))
+                    .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing)))
             } else {
                 onboardingView
-                    .transition(.move(edge: .leading))
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)) )
             }
         }
         .animation(.smooth, value: showTabbar)
