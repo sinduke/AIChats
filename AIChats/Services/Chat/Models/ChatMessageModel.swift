@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ChatMessageModel {
+struct ChatMessageModel: Identifiable {
     let id: String
     let chatID: String
     let authorID: String?
