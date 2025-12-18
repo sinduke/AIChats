@@ -26,7 +26,11 @@ struct CompletedView: View {
             }
             .frame(maxHeight: .infinity)
             .safeAreaInset(edge: .bottom, alignment: .center, content: {
-                ctaButton
+                AsyncCallToActionButton(
+                    isLoading: isCompletedProfileSetup,
+                    title: "Finished",
+                    action: onFinishedButtonTapped
+                )
             })
             .padding(24)
         }
@@ -41,25 +45,6 @@ struct CompletedView: View {
             appState.updateViewState(showTabbarView: true)
         }
     }
-    
-    // MARK: -- Views
-    private var ctaButton: some View {
-        
-        ZStack {
-            if isCompletedProfileSetup {
-                ProgressView()
-                    .tint(.white)
-            } else {
-                Text("Finished")
-            }
-        }
-        .callToActionButton()
-        .anyButton(.pressable) {
-            onFinishedButtonTapped()
-        }
-        .disabled(isCompletedProfileSetup)
-    }
-    
 }
 
 #Preview {
