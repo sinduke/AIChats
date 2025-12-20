@@ -12,8 +12,9 @@ struct ChatView: View {
     @State private var avatar: AvatarModel? = .mock
     @State private var currentUser: UserModel? = .mock
     @State private var textFieldText: String = ""
-    @State private var showChatSettings: Bool = false
     @State private var scrollPosition: String?
+    @State private var showChatSettings: AnyAppAlert?
+    @State private var showAlert: AnyAppAlert?
     var body: some View {
         VStack(spacing: 0) {
             scrollSection
@@ -28,18 +29,10 @@ struct ChatView: View {
                     .anyButton {
                         onChatSettingsButtonTapped()
                     }
-                    .confirmationDialog("", isPresented: $showChatSettings) {
-                        Button("Report user/chat", role: .destructive) {
-                            print("Report tapped")
-                        }
-                        Button("Delete chat", role: .destructive) {
-                            print("Delete tapped")
-                        }
-                    } message: {
-                        Text("What do you want to do?")
-                    }
+                    .showCustomAlert(type: .confirmationDialog, $showChatSettings)
             }
         }
+        .showCustomAlert($showAlert)
     }
     
     // MARK: -- Views --
@@ -93,26 +86,82 @@ struct ChatView: View {
         .animation(.default, value: chatMessages.count)
         .animation(.default, value: scrollPosition)
     }
+    // MARK: -- Enums
+    enum TextValidError: LocalizedError {
+        case notEnoughCharacters(min: Int)
+        case containsProhibitedWord(word: String)
+        
+        var errorDescription: String? {
+            switch self {
+            case .notEnoughCharacters(let min):
+                return "Please enter at least \(min) characters."
+            case .containsProhibitedWord(let word):
+                return "Your message contains prohibited language: \"\(word)\""
+            }
+        }
+    }
     // MARK: -- Functions --
+    private func checkIfTextisValid(_ text: String) throws {
+        let minimumNumberOfCharacters: Int = 3
+        let badWrods: [String] = ["shit", "damn", "bitch", "ass", "fuck"]
+        let filter = ProfanityFilter(
+            banned: badWrods,
+            minChars: minimumNumberOfCharacters
+        )
+        
+        try filter.validate(text) { failure -> TextValidError in
+            // 把 ProfanityFilter 的“命中词/原因”映射成你 View 内部的 TextValidError
+            switch failure {
+            case .tooShort(let min):
+                return .notEnoughCharacters(min: min)
+            case .hit(let word):
+                return .containsProhibitedWord(word: word)
+            }
+        }
+    }
+    
     private func onSendButtonTapped() {
         guard let currentUser else { return }
         let content = textFieldText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !content.isEmpty else { return }
-        let newMessage = ChatMessageModel(
-            id: UUID().uuidString,
-            chatID: UUID().uuidString,
-            authorID: currentUser.userID,
-            content: content,
-            sendByIDs: nil,
-            dateCreated: .now
-        )
-        chatMessages.append(newMessage)
-        scrollPosition = newMessage.id
-        textFieldText = ""
+        do {
+            try checkIfTextisValid(content)
+            
+            let newMessage = ChatMessageModel(
+                id: UUID().uuidString,
+                chatID: UUID().uuidString,
+                authorID: currentUser.userID,
+                content: content,
+                sendByIDs: nil,
+                dateCreated: .now
+            )
+            
+            chatMessages.append(newMessage)
+            scrollPosition = newMessage.id
+            textFieldText = ""
+            
+        } catch {
+            showAlert = AnyAppAlert(error: error)
+        }
     }
     
     private func onChatSettingsButtonTapped() {
-        showChatSettings = true
+        showChatSettings = AnyAppAlert(
+            title: "",
+            message: "What would you like to do?",
+            buttons: {
+                AnyView(
+                    Group {
+                        Button("Report User/Chat", role: .destructive) {
+                            
+                        }
+                        Button("Delete Chat", role: .destructive) {
+                            
+                        }
+                    }
+                )
+            }
+        )
     }
 }
 
