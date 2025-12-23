@@ -13,6 +13,8 @@ struct ChatBubbleView: View {
     var backgroundColor: Color = Color(.systemGray6)
     var imageName: String?
     var showImage: Bool = true
+    var onImagePressed: (() -> Void)?
+    
     var body: some View {
         HStack(alignment: .top) {
             
@@ -20,6 +22,9 @@ struct ChatBubbleView: View {
                 ZStack {
                     if let imageName {
                         ImageLoadView(urlString: imageName)
+                            .anyButton {
+                                onImagePressed?()
+                            }
                     } else {
                         Rectangle()
                             .fill(.secondary.opacity(0.5))
