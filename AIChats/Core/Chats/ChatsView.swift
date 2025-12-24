@@ -9,8 +9,11 @@ import SwiftUI
 
 struct ChatsView: View {
     @State private var chats: [ChatModel] = ChatModel.mocks
+    
+    @State private var path: [NavigationPathOption] = []
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             List(chats) { chat in
                 ChatRowCellViewBuilder(
                     currentUserID: nil, // FIXME: - Pass current user ID here
@@ -22,12 +25,18 @@ struct ChatsView: View {
                         return .mocks.randomElement()!
                     }
                     .anyButton(.highlight, action: {
-                        // Handle chat selection
+                        onChatPressed(chat: chat)
                     })
                     .removeListRowFormatting()
             }
             .navigationTitle("Chats")
+            .navigationDestinationForCoreModule(path: $path)
         }
+    }
+    
+    // MARK: -- Funcations --
+    private func onChatPressed(chat: ChatModel) {
+        path.append(.chat(avatarID: chat.avatarID))
     }
 }
 
