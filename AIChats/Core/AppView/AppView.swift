@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppView: View {
     @State var appState: AppState = AppState()
+    @Environment(\.authService) private var authService
     var body: some View {
         AppViewBuilder(
             showTabbar: appState.showTabbar) {
@@ -17,6 +18,23 @@ struct AppView: View {
                 WelcomeView()
             }
             .environment(appState)
+            .task {
+                await checkUserStatus()
+            }
+    }
+    // MARK: -- Funcations --
+    private func checkUserStatus() async {
+        if let user = authService.getAuthenticatedUser() {
+            print("User already authenticated: \(user.uid)")
+            dump(user)
+        } else {
+            do {
+                let result = try await authService.signInAnonymously()
+                print("Signed in as: \(result.user.uid)")
+            } catch {
+                dump(error)
+            }
+        }
     }
 }
 
