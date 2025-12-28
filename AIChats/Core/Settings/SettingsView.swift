@@ -85,14 +85,12 @@ struct SettingsView: View {
         Section {
             HStack {
                 Text("Version")
-                Spacer()
-                Text(AIUtilities.appVersion ?? "")
+                    .badge(AIUtilities.appVersion ?? "")
             }
             
             HStack {
                 Text("Build Number")
-                Spacer()
-                Text(AIUtilities.buildNumber ?? "")
+                    .badge(AIUtilities.buildNumber ?? "")
             }
             
             Text("Contact Us")
@@ -173,7 +171,20 @@ fileprivate extension View {
     }
 }
 
-#Preview {
+#Preview("No Authentication") {
     SettingsView()
+        .environment(\.authService, MockAuthService(user: nil))
+        .environment(AppState())
+}
+
+#Preview("Anomymous User") {
+    SettingsView()
+        .environment(\.authService, MockAuthService(user: UserAuthInfo.mock(isAnonymous: true)))
+        .environment(AppState())
+}
+
+#Preview("Not anonymous User") {
+    SettingsView()
+        .environment(\.authService, MockAuthService(user: UserAuthInfo.mock(isAnonymous: false)))
         .environment(AppState())
 }

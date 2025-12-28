@@ -28,4 +28,15 @@ struct UserAuthInfo {
         self.creationDate = creationDate
         self.lastSignInDate = lastSignInDate
     }
+    
+    // 从 Firebase User 初始化
+    static func mock(isAnonymous: Bool = false) -> Self {
+        .init(
+            uid: "mock_user_001",
+            email: "sinduke@outlook.com",
+            isAnonymous: isAnonymous,
+            creationDate: .now,
+            lastSignInDate: .now
+        )
+    }
 }
