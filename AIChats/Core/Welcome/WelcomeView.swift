@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct WelcomeView: View {
+    @Environment(AppState.self) private var appState
     @State private var imageURL: String = Constants.randomImageURL
     @State private var showCreateAccountView: Bool = false
     var body: some View {
@@ -28,9 +29,12 @@ struct WelcomeView: View {
             .sheet(isPresented: $showCreateAccountView) {
                 CreateAccountView(
                     title: "Sign In",
-                    subtitle: "Connect to your account to back up your chats and settings."
+                    subtitle: "Connect to your account to back up your chats and settings.",
+                    onDidSignIn: { isNewUser in
+                        handlerDidSignIn(isNewUser: isNewUser)
+                    }
                 )
-                    .presentationDetents([.medium])
+                .presentationDetents([.medium])
             }
         }
     }
@@ -79,8 +83,18 @@ struct WelcomeView: View {
         }
     }
     
+    // MARK: -- Funcations --
     private func onSignInButtonTapped() {
         showCreateAccountView = true
+    }
+    
+    private func handlerDidSignIn(isNewUser: Bool) {
+        if isNewUser {
+            // Show onboarding flow
+        } else {
+            // Push into tabbar
+            appState.updateViewState(showTabbarView: true)
+        }
     }
 }
 

@@ -1,0 +1,18 @@
+//
+//  UserAuthInfo+FirebaseAuth.swift
+//  AIChats
+//
+//  Created by sinduke on 12/26/25.
+//
+
+import FirebaseAuth
+
+extension UserAuthInfo {
+    init(user: User) {
+        self.uid = user.uid
+        self.email = user.email
+        self.isAnonymous = user.isAnonymous
+        self.creationDate = user.metadata.creationDate
+        self.lastSignInDate = user.metadata.lastSignInDate
+    }
+}

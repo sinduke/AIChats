@@ -21,6 +21,13 @@ struct AppView: View {
             .task {
                 await checkUserStatus()
             }
+            .onChange(of: appState.showTabbar) { _, showTabbar in
+                if !showTabbar {
+                    Task {
+                        await checkUserStatus()
+                    }
+                }
+            }
     }
     // MARK: -- Funcations --
     private func checkUserStatus() async {

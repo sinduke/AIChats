@@ -7,40 +7,10 @@
 
 import SwiftUI
 import FirebaseAuth
+import SignInAppleAsync
 
 extension EnvironmentValues {
     @Entry var authService: FirebaseAuthService = FirebaseAuthService()
-}
-
-// 使用本地模型来解耦 Firebase 依赖
-struct UserAuthInfo {
-    let uid: String
-    let email: String?
-    let isAnonymous: Bool
-    let creationDate: Date?
-    let lastSignInDate: Date?
-    
-    init(
-        uid: String,
-        email: String? = nil,
-        isAnonymous: Bool = false,
-        creationDate: Date? = nil,
-        lastSignInDate: Date? = nil
-    ) {
-        self.uid = uid
-        self.email = email
-        self.isAnonymous = isAnonymous
-        self.creationDate = creationDate
-        self.lastSignInDate = lastSignInDate
-    }
-    
-    init(user: User) {
-        self.uid = user.uid
-        self.email = user.email
-        self.isAnonymous = user.isAnonymous
-        self.creationDate = user.metadata.creationDate
-        self.lastSignInDate = user.metadata.lastSignInDate
-    }
 }
 
 struct FirebaseAuthService {
@@ -53,9 +23,85 @@ struct FirebaseAuthService {
     }
     
     func signInAnonymously() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
-        let resuct = try await Auth.auth().signInAnonymously()
-        let user = UserAuthInfo(user: resuct.user)
-        let isNewUser = resuct.additionalUserInfo?.isNewUser ?? true
+        try await Auth.auth().signInAnonymously().asAuthInfo
+    }
+    
+    func signInWithApple() async throws -> (user: UserAuthInfo, isNewUser: Bool) {
+        let helper = SignInWithAppleHelper()
+        let response = try await helper.signIn()
+        
+        let credential = OAuthProvider.credential(
+            providerID: .apple,
+            idToken: response.token,
+            rawNonce: response.nonce
+        )
+        
+        // Try to link to existing anonymous account
+//        if let user = Auth.auth().currentUser, user.isAnonymous, let result = try? await user.link(with: credential) {
+//            return result.asAuthInfo
+//        }
+        if let user = Auth.auth().currentUser, user.isAnonymous {
+            do {
+                let result = try await user.link(with: credential)
+                return result.asAuthInfo
+            } catch let error as NSError {
+                /**
+                 “记忆口诀”
+                 link 失败别急着 signIn
+                 先翻 error.userInfo
+                 有 UpdatedCredential 就用它
+                 */
+                let authErrorCode = AuthErrorCode(rawValue: error.code)
+                
+                switch authErrorCode {
+                case .credentialAlreadyInUse, .providerAlreadyLinked:
+                    guard let updatedCredential =
+                            error.userInfo[AuthErrorUserInfoUpdatedCredentialKey] as? AuthCredential
+                    else {
+                        throw error // 理论上极少发生，但必须兜底
+                    }
+                    // 用 Firebase 给你的“正确 credential”登录
+                    let result = try await Auth.auth().signIn(with: updatedCredential)
+                    return result.asAuthInfo
+                    
+                default:
+                    break
+                }
+            }
+        }
+        // 这里需要苹果开发者账号才会出现SignInWithApple 否则报错10000
+        // Sign in normally
+        let result = try await Auth.auth().signIn(with: credential)
+        
+        return result.asAuthInfo
+    }
+    
+    func signOut() throws {
+        try Auth.auth().signOut()
+    }
+    
+    func deleteAccount() async throws {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthError.userNotFound
+        }
+        try await user.delete()
+    }
+    
+    enum AuthError: LocalizedError {
+        case userNotFound
+        
+        var errorDescription: String? {
+            switch self {
+            case .userNotFound: "Current User is not found."
+            }
+        }
+    }
+}
+
+extension AuthDataResult {
+    var asAuthInfo: (user: UserAuthInfo, isNewUser: Bool) {
+        let user = UserAuthInfo(user: user)
+        let isNewUser = additionalUserInfo?.isNewUser ?? true
         return (user, isNewUser)
     }
 }

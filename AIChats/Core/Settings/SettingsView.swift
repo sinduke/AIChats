@@ -8,11 +8,15 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @Environment(\.dismiss) var dismiss
-    @Environment(AppState.self) var appState
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.authService) private var authService
+    @Environment(AppState.self) private var appState
+    
     @State private var isPurchased: Bool = false
-    @State private var isAnonymousUser: Bool = true
+    @State private var isAnonymousUser: Bool = false
     @State private var showCreateAccountView: Bool = false
+    
+    @State private var showAlert: AnyAppAlert?
     var body: some View {
         NavigationStack {
             List {
@@ -21,20 +25,21 @@ struct SettingsView: View {
                 applicationSection
             }
             .navigationTitle("Settings")
-            .sheet(isPresented: $showCreateAccountView) {
+            .sheet(isPresented: $showCreateAccountView, onDismiss: {
+                setAnonymousAccountState()
+            }, content: {
                 CreateAccountView()
                     .presentationDetents([.medium])
+            })
+            .showCustomAlert($showAlert)
+            .onAppear {
+                setAnonymousAccountState()
             }
         }
     }
     // MARK: -- Views
     private var accountSection: some View {
         Section("Account") {
-            Text("Sign Out")
-                .rowFormatting()
-                .anyButton(.pressable, action: {
-                    onSignOutButtonTapped()
-                })
             
             if isAnonymousUser {
                 Text("Save & back-up account")
@@ -53,7 +58,7 @@ struct SettingsView: View {
                 .foregroundStyle(.red)
                 .rowFormatting()
                 .anyButton(.pressable, action: {
-                    print("Delete Account Tapped")
+                    onDeleteAccountButtonTapped()
                 })
         }
     }
@@ -107,15 +112,55 @@ struct SettingsView: View {
     // MARK: -- Functions
     private func onSignOutButtonTapped() {
         print("Sign Out Tapped")
-        dismiss()
         Task {
-            try? await Task.sleep(for: .seconds(2))
-            appState.updateViewState(showTabbarView: false)
+            do {
+                try authService.signOut()
+                await dismissScreen()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
         }
+    }
+    
+    private func dismissScreen() async {
+        dismiss()
+        try? await Task.sleep(for: .seconds(2))
+        appState.updateViewState(showTabbarView: false)
     }
     
     private func onCreateAccountButtonTapped() {
         showCreateAccountView = true
+    }
+
+    private func setAnonymousAccountState() {
+        isAnonymousUser = authService.getAuthenticatedUser()?.isAnonymous == true
+    }
+    
+    private func onDeleteAccountButtonTapped() {
+        showAlert = AnyAppAlert(
+            title: "Delete Account?",
+            message: "This will permanently delete your account and all your data. Are you sure you want to do this?",
+            buttons: {
+                AnyView(
+                    Group {
+                        Button(role: .destructive, action: {
+                            onDeleteAccountConfirmation()
+                        })
+                    }
+                )
+            }
+        )
+    }
+    
+    private func onDeleteAccountConfirmation() {
+        Task {
+            do {
+                try await authService.deleteAccount()
+                await dismissScreen()
+            } catch {
+                showAlert = AnyAppAlert(error: error)
+            }
+        }
     }
 }
 
