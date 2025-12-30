@@ -7,11 +7,57 @@
 
 import SwiftUI
 
-struct UserModel {
+struct UserModel: Codable {
     let userID: String
-    let dateCreated: Date?
+    let email: String?
+    let isAnonymous: Bool?
+    let creationVersion: String?
+    let creationDate: Date?
+    let lastSignInDate: Date?
     let didCompleteOnboarding: Bool?
     let profileColorHex: String?
+    
+    init(
+        userID: String,
+        email: String? = nil,
+        isAnonymous: Bool? = nil,
+        creationDate: Date? = nil,
+        creationVersion: String? = nil,
+        lastSignInDate: Date? = nil,
+        didCompleteOnboarding: Bool? = nil,
+        profileColorHex: String? = nil
+    ) {
+        self.userID = userID
+        self.email = email
+        self.isAnonymous = isAnonymous
+        self.creationDate = creationDate
+        self.creationVersion = creationVersion
+        self.lastSignInDate = lastSignInDate
+        self.didCompleteOnboarding = didCompleteOnboarding
+        self.profileColorHex = profileColorHex
+    }
+    
+    init(auth: UserAuthInfo, creationVersion: String?) {
+        self.init(
+            userID: auth.uid,
+            email: auth.email,
+            isAnonymous: auth.isAnonymous,
+            creationDate: auth.creationDate,
+            creationVersion: creationVersion,
+            lastSignInDate: auth.lastSignInDate
+        )
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case email
+        case isAnonymous = "is_anonymous"
+        case creationDate = "creation_date"
+        case creationVersion = "creation_version"
+        case lastSignInDate = "last_sign_in_date"
+        case didCompleteOnboarding = "did_complete_onboarding"
+        case profileColorHex = "profile_color_hex"
+    }
     
     var profileColorCalculated: Color {
         guard let profileColorHex else {
@@ -28,25 +74,25 @@ struct UserModel {
         [
             UserModel(
                 userID: "user_001",
-                dateCreated: Date().addingTimeInterval(days: -7, hours: -2),
+                creationDate: Date().addingTimeInterval(days: -7, hours: -2),
                 didCompleteOnboarding: true,
                 profileColorHex: "#4ECDC4" // 青绿
             ),
             UserModel(
                 userID: "user_002",
-                dateCreated: Date().addingTimeInterval(days: -3, hours: -6, minutes: -20),
+                creationDate: Date().addingTimeInterval(days: -3, hours: -6, minutes: -20),
                 didCompleteOnboarding: false,
                 profileColorHex: "#FF6B6B" // 热情红橙
             ),
             UserModel(
                 userID: "user_003",
-                dateCreated: Date().addingTimeInterval(days: -1, hours: -1),
+                creationDate: Date().addingTimeInterval(days: -1, hours: -1),
                 didCompleteOnboarding: true,
                 profileColorHex: "#FFD93D" // 明亮黄
             ),
             UserModel(
                 userID: "user_004",
-                dateCreated: Date().addingTimeInterval(hours: -8),
+                creationDate: Date().addingTimeInterval(hours: -8),
                 didCompleteOnboarding: false,
                 profileColorHex: "#1A535C" // 深青蓝
             )

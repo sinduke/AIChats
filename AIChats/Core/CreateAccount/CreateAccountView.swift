@@ -10,6 +10,7 @@ import AuthenticationServices
 
 struct CreateAccountView: View {
     @Environment(AuthManager.self) private var authManager
+    @Environment(UserManager.self) private var userManager
     @Environment(\.dismiss) private var dismiss
     var title: String = "Create Account?"
     var subtitle: String = "Don't lose your data. Connect to an SSO account to back up your chats and settings."
@@ -42,7 +43,10 @@ struct CreateAccountView: View {
             do {
                 let result = try await authManager.signInWithApple()
                 print("Sign in with Apple")
-                print("Success: \(result)")
+                print("Success: \(result.user.uid)")
+                
+                try await userManager.logIn(user: result.user, isNewUser: result.isNewUser)
+                print("Successfully logged in.")
                 onDidSignIn?(result.isNewUser)
                 dismiss()
             } catch {
