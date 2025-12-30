@@ -5,11 +5,18 @@
 //  Created by sinduke on 12/29/25.
 //
 
+import SwiftUI
 
 struct MockAuthService: AuthService {
     let currentUser: UserAuthInfo?
     init(user: UserAuthInfo? = nil) {
         self.currentUser = user
+    }
+    
+    func addAuthenticatedUserListener(onListenerAttached: (any NSObjectProtocol) -> Void) -> AsyncStream<UserAuthInfo?> {
+        AsyncStream { continuation in
+            continuation.yield(currentUser)
+        }
     }
     
     func getAuthenticatedUser() -> UserAuthInfo? {
