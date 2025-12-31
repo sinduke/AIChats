@@ -54,5 +54,5 @@ struct CompletedView: View {
 #Preview {
     CompletedView(selectedColor: .mint)
         .environment(AppState(showTabbar: false))
-        .environment(UserManager(service: MockUserService()))
+        .environment(UserManager(services: MockUserServiceContainer()))
 }
