@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CompletedView: View {
     @Environment(AppState.self) private var appState
+    @Environment(UserManager.self) private var userManager
     var selectedColor: Color = .accentColor
     @State private var isCompletedProfileSetup: Bool = false
     var body: some View {
@@ -40,7 +41,10 @@ struct CompletedView: View {
     private func onFinishedButtonTapped() {
         isCompletedProfileSetup = true
         Task {
-            try? await Task.sleep(for: .seconds(2))
+            let hexColor = selectedColor.toHex()
+            try await userManager.markOnboardingComoleteForCurrentUser(profileColorHex: hexColor)
+            
+            // dismissScreen
             isCompletedProfileSetup = false
             appState.updateViewState(showTabbarView: true)
         }
@@ -50,4 +54,5 @@ struct CompletedView: View {
 #Preview {
     CompletedView(selectedColor: .mint)
         .environment(AppState(showTabbar: false))
+        .environment(UserManager(service: MockUserService()))
 }

@@ -8,9 +8,12 @@
 import SwiftUI
 
 struct ProfileView: View {
+    
+    @Environment(UserManager.self) private var userManager
+    
     @State private var showSettingsView = false
     @State private var showCreateAvatarView: Bool = false
-    @State private var currentUser: UserModel? = .mock
+    @State private var currentUser: UserModel?
     @State private var myAvatars: [AvatarModel] = []
     @State private var isLoading: Bool = true
 
@@ -111,6 +114,7 @@ struct ProfileView: View {
 
     // MARK: -- Functions --
     private func loadData() async {
+        self.currentUser = userManager.currentUser
         try? await Task.sleep(for: .seconds(2))
         isLoading = false
         myAvatars = AvatarModel.mocks
@@ -137,4 +141,5 @@ struct ProfileView: View {
 #Preview {
     ProfileView()
         .environment(AppState())
+        .environment(UserManager(service: MockUserService(currentUser: .mock)))
 }
