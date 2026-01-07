@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F22022662F05A97900B88616 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = F22022652F05A97900B88616 /* OpenAI */; };
 		F269176D2EB240F200005F47 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F269176C2EB240F200005F47 /* SDWebImageSwiftUI */; };
 		F27816452EFC584D005A5985 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F27816442EFC584D005A5985 /* FirebaseAuth */; };
 		F27816EB2F00E82C005A5985 /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = F27816EA2F00E82C005A5985 /* SignInAppleAsync */; };
@@ -78,6 +79,7 @@
 				F269176D2EB240F200005F47 /* SDWebImageSwiftUI in Frameworks */,
 				F27816FA2F04BFD9005A5985 /* SwiftfulFirestore in Frameworks */,
 				F27816452EFC584D005A5985 /* FirebaseAuth in Frameworks */,
+				F22022662F05A97900B88616 /* OpenAI in Frameworks */,
 				F27816F72F041FF7005A5985 /* FirebaseFirestore in Frameworks */,
 				F29FF64F2ECA337400FA56BC /* SwiftfulUtilities in Frameworks */,
 			);
@@ -155,6 +157,7 @@
 				F27816EA2F00E82C005A5985 /* SignInAppleAsync */,
 				F27816F62F041FF7005A5985 /* FirebaseFirestore */,
 				F27816F92F04BFD9005A5985 /* SwiftfulFirestore */,
+				F22022652F05A97900B88616 /* OpenAI */,
 			);
 			productName = AIChats;
 			productReference = F2A398032EB0D1A00081FDB1 /* AIChats.app */;
@@ -244,6 +247,7 @@
 				F27816432EFC584D005A5985 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				F27816E92F00E82C005A5985 /* XCRemoteSwiftPackageReference "SignInAppleAsync" */,
 				F27816F82F04BFD9005A5985 /* XCRemoteSwiftPackageReference "SwiftfulFirestore" */,
+				F22022642F05A97900B88616 /* XCRemoteSwiftPackageReference "OpenAI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = F2A398042EB0D1A00081FDB1 /* Products */;
@@ -706,6 +710,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		F22022642F05A97900B88616 /* XCRemoteSwiftPackageReference "OpenAI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/MacPaw/OpenAI.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.7;
+			};
+		};
 		F269176B2EB240F200005F47 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI.git";
@@ -749,6 +761,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		F22022652F05A97900B88616 /* OpenAI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F22022642F05A97900B88616 /* XCRemoteSwiftPackageReference "OpenAI" */;
+			productName = OpenAI;
+		};
 		F269176C2EB240F200005F47 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = F269176B2EB240F200005F47 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
