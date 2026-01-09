@@ -28,11 +28,13 @@ struct Dependencies {
     let authManager: AuthManager
     let userManager: UserManager
     let aiManager: AIManager
+    let avatarManager: AvatarManager
     
     init() {
         authManager = AuthManager(service: FirebaseAuthService())
         userManager = UserManager(services: ProductUserServiceContainer())
         aiManager = AIManager(service: OpenAIAIService())
+        avatarManager = AvatarManager(service: FirebaseAvatarService(imageUploader: FirebaseImageUploadService()))
     }
 }
 
@@ -45,6 +47,7 @@ struct AIChatsApp: App {
                 .environment(delegate.dependencies.authManager)
                 .environment(delegate.dependencies.userManager)
                 .environment(delegate.dependencies.aiManager)
+                .environment(delegate.dependencies.avatarManager)
         }
     }
 }

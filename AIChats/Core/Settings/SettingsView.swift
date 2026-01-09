@@ -141,15 +141,10 @@ struct SettingsView: View {
         showAlert = AnyAppAlert(
             title: "Delete Account?",
             message: "This will permanently delete your account and all your data. Are you sure you want to do this?",
-            buttons: {
-                AnyView(
-                    Group {
-                        Button(role: .destructive, action: {
-                            onDeleteAccountConfirmation()
-                        })
-                    }
-                )
-            }
+            buttons: [
+                .destructive("Delete", onDeleteAccountConfirmation),
+                .cancel()
+            ]
         )
     }
     

@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct AvatarModel: Hashable {
+struct AvatarModel: Hashable, Identifiable, Codable {
+    var id: String { avatarID }
     let avatarID: String
     let name: String?
     let characterOption: CharacterOption?
@@ -41,6 +42,17 @@ struct AvatarModel: Hashable {
         AvatarDescriptionBuilder(avatar: self).characterDescription
     }
     
+    enum CodingKeys: String, CodingKey {
+        case avatarID = "avatar_id"
+        case name
+        case characterOption = "character_option"
+        case characterAction = "character_action"
+        case characterLocation = "character_location"
+        case profileImageName = "profile_image_name"
+        case authID = "auth_id"
+        case dateCreated = "date_created"
+    }
+
     static var mock: Self {
         mocks.first!
     }
@@ -88,5 +100,28 @@ struct AvatarModel: Hashable {
                 profileImageName: Constants.randomImageURL
             )
         ]
+    }
+}
+
+extension AvatarModel {
+    func copy(
+        name: String? = nil,
+        characterOption: CharacterOption? = nil,
+        characterAction: CharacterAction? = nil,
+        characterLocation: CharacterLocation? = nil,
+        profileImageName: String? = nil,
+        authID: String? = nil,
+        dateCreated: Date? = nil
+    ) -> AvatarModel {
+        AvatarModel(
+            avatarID: avatarID, // 通常 id 不给改
+            name: name ?? self.name,
+            characterOption: characterOption ?? self.characterOption,
+            characterAction: characterAction ?? self.characterAction,
+            characterLocation: characterLocation ?? self.characterLocation,
+            profileImageName: profileImageName ?? self.profileImageName,
+            authID: authID ?? self.authID,
+            dateCreated: dateCreated ?? self.dateCreated
+        )
     }
 }

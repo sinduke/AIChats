@@ -7,6 +7,52 @@
 
 import SwiftUI
 
+enum TextValidError: LocalizedError, Equatable {
+    case notEnoughCharacters(min: Int)
+    case containsProhibitedWord(word: String)
+
+    var errorDescription: String? {
+        switch self {
+        case .notEnoughCharacters(let min):
+            return "Please enter at least \(min) characters."
+        case .containsProhibitedWord(let word):
+            return "Your message contains prohibited language: \"\(word)\""
+        }
+    }
+}
+
+final class ChatTextValidator {
+
+    // MARK: - Shared (Default Instance)
+    static let shared = ChatTextValidator()
+
+    // MARK: - Private
+    private let filter: ProfanityFilter
+
+    // MARK: - Init
+    init(
+        bannedWords: [String] = ["shit", "damn", "bitch", "ass", "fuck"],
+        minChars: Int = 3
+    ) {
+        self.filter = ProfanityFilter(
+            banned: bannedWords,
+            minChars: minChars
+        )
+    }
+
+    // MARK: - API
+    func validate(_ text: String) throws {
+        try filter.validate(text) { failure -> TextValidError in
+            switch failure {
+            case .tooShort(let min):
+                return .notEnoughCharacters(min: min)
+            case .hit(let word):
+                return .containsProhibitedWord(word: word)
+            }
+        }
+    }
+}
+
 // MARK: - Profanity Filter (defensive, throws)
 struct ProfanityFilter {
     

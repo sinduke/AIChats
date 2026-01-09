@@ -99,20 +99,7 @@ struct ChatView: View {
         .animation(.default, value: chatMessages.count)
         .animation(.default, value: scrollPosition)
     }
-    // MARK: -- Enums
-    enum TextValidError: LocalizedError {
-        case notEnoughCharacters(min: Int)
-        case containsProhibitedWord(word: String)
-        
-        var errorDescription: String? {
-            switch self {
-            case .notEnoughCharacters(let min):
-                return "Please enter at least \(min) characters."
-            case .containsProhibitedWord(let word):
-                return "Your message contains prohibited language: \"\(word)\""
-            }
-        }
-    }
+    
     // MARK: -- Functions --
     private func profileModal(avatar: AvatarModel) -> some View {
         ProfileModalView(
@@ -124,31 +111,12 @@ struct ChatView: View {
             }
     }
     
-    private func checkIfTextisValid(_ text: String) throws {
-        let minimumNumberOfCharacters: Int = 3
-        let badWrods: [String] = ["shit", "damn", "bitch", "ass", "fuck"]
-        let filter = ProfanityFilter(
-            banned: badWrods,
-            minChars: minimumNumberOfCharacters
-        )
-        
-        try filter.validate(text) { failure -> TextValidError in
-            // 把 ProfanityFilter 的“命中词/原因”映射成你 View 内部的 TextValidError
-            switch failure {
-            case .tooShort(let min):
-                return .notEnoughCharacters(min: min)
-            case .hit(let word):
-                return .containsProhibitedWord(word: word)
-            }
-        }
-    }
-    
     private func onSendButtonTapped() {
         guard let currentUser else { return }
         let content = textFieldText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !content.isEmpty else { return }
         do {
-            try checkIfTextisValid(content)
+            try ChatTextValidator.shared.validate(content)
             
             let newMessage = ChatMessageModel(
                 id: UUID().uuidString,
@@ -172,18 +140,15 @@ struct ChatView: View {
         showChatSettings = AnyAppAlert(
             title: "",
             message: "What would you like to do?",
-            buttons: {
-                AnyView(
-                    Group {
-                        Button("Report User/Chat", role: .destructive) {
-                            
-                        }
-                        Button("Delete Chat", role: .destructive) {
-                            
-                        }
-                    }
-                )
-            }
+            buttons: [
+                .destructive("Report User/Chat") {
+                    
+                },
+                .destructive("Delete Chat") {
+                    
+                },
+                .cancel()
+            ]
         )
     }
     

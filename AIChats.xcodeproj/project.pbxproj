@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		F22022662F05A97900B88616 /* OpenAI in Frameworks */ = {isa = PBXBuildFile; productRef = F22022652F05A97900B88616 /* OpenAI */; };
+		F22022772F10DE3000B88616 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = F22022762F10DE3000B88616 /* FirebaseStorage */; };
 		F269176D2EB240F200005F47 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = F269176C2EB240F200005F47 /* SDWebImageSwiftUI */; };
 		F27816452EFC584D005A5985 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F27816442EFC584D005A5985 /* FirebaseAuth */; };
 		F27816EB2F00E82C005A5985 /* SignInAppleAsync in Frameworks */ = {isa = PBXBuildFile; productRef = F27816EA2F00E82C005A5985 /* SignInAppleAsync */; };
@@ -80,6 +81,7 @@
 				F27816FA2F04BFD9005A5985 /* SwiftfulFirestore in Frameworks */,
 				F27816452EFC584D005A5985 /* FirebaseAuth in Frameworks */,
 				F22022662F05A97900B88616 /* OpenAI in Frameworks */,
+				F22022772F10DE3000B88616 /* FirebaseStorage in Frameworks */,
 				F27816F72F041FF7005A5985 /* FirebaseFirestore in Frameworks */,
 				F29FF64F2ECA337400FA56BC /* SwiftfulUtilities in Frameworks */,
 			);
@@ -158,6 +160,7 @@
 				F27816F62F041FF7005A5985 /* FirebaseFirestore */,
 				F27816F92F04BFD9005A5985 /* SwiftfulFirestore */,
 				F22022652F05A97900B88616 /* OpenAI */,
+				F22022762F10DE3000B88616 /* FirebaseStorage */,
 			);
 			productName = AIChats;
 			productReference = F2A398032EB0D1A00081FDB1 /* AIChats.app */;
@@ -765,6 +768,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = F22022642F05A97900B88616 /* XCRemoteSwiftPackageReference "OpenAI" */;
 			productName = OpenAI;
+		};
+		F22022762F10DE3000B88616 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = F27816432EFC584D005A5985 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
 		};
 		F269176C2EB240F200005F47 /* SDWebImageSwiftUI */ = {
 			isa = XCSwiftPackageProductDependency;
