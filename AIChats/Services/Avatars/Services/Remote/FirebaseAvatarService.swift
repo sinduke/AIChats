@@ -8,7 +8,7 @@
 import FirebaseFirestore
 import SwiftfulFirestore
 
-struct FirebaseAvatarService: AvatarServiceProtocol {
+struct FirebaseAvatarService: RemoteAvatarServiceProtocol {
     private let imageUploader: ImageUploadServiceProtocol
     
     var collection: CollectionReference {
@@ -55,5 +55,11 @@ struct FirebaseAvatarService: AvatarServiceProtocol {
             .whereField(AvatarModel.CodingKeys.authID.rawValue, isEqualTo: authorID)
             .limit(to: 100)
             .getAllDocuments()
+    }
+
+    // 在对话页面加载头像
+    func getAvatarByID(avatarID: String) async throws -> AvatarModel {
+        try await collection
+            .getDocument(id: avatarID)
     }
 }

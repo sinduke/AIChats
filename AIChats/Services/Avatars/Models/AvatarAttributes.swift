@@ -5,7 +5,7 @@
 //  Created by sinduke on 12/18/25.
 //
 
-import SwiftUI
+import Foundation
 
 struct AvatarDescriptionBuilder {
     let characterOption: CharacterOption

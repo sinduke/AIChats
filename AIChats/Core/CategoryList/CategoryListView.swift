@@ -76,5 +76,5 @@ struct CategoryListView: View {
 
 #Preview {
     CategoryListView(path: .constant([]))
-        .environment(AvatarManager(service: MockAvatarService()))
+        .environment(AvatarManager(remote: MockAvatarService()))
 }

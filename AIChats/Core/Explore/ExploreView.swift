@@ -146,6 +146,5 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
-        .environment(AvatarManager(service: MockAvatarService()))
-//        .environment(AvatarManager(service: FirebaseAvatarService(imageUploader: FirebaseImageUploadService())))
+        .environment(AvatarManager(remote: MockAvatarService()))
 }
