@@ -9,21 +9,41 @@ import SwiftUI
 
 struct ExploreView: View {
     
-    @State private var featuredAvatars: [AvatarModel] = AvatarModel.mocks
+    @Environment(AvatarManager.self) private var avatarManager: AvatarManager
+    
+    @State private var featuredAvatars: [AvatarModel] = []
+    @State private var popularAvatars: [AvatarModel] = []
     @State private var categories: [CharacterOption] = CharacterOption.allCases
-    @State private var popularAvatars: [AvatarModel] = AvatarModel.mocks
     
     @State private var path: [NavigationPathOption] = []
     
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                featuredSection
-                categoriesSection
-                popularSection
+                
+                if featuredAvatars.isEmpty && popularAvatars.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, alignment: .center)
+                        .removeListRowFormatting()
+                }
+                
+                if !featuredAvatars.isEmpty {
+                    featuredSection
+                }
+
+                if !popularAvatars.isEmpty {
+                    categoriesSection
+                    popularSection
+                }
             }
             .navigationTitle("Explore")
             .navigationDestinationForCoreModule(path: $path)
+            .task {
+                await loadFeatureAvatars()
+            }
+            .task {
+                await loadPopularAvatars()
+            }
         }
     }
     
@@ -97,6 +117,24 @@ struct ExploreView: View {
     }
     
     // MARK: -- Funcations --
+    private func loadFeatureAvatars() async {
+        guard featuredAvatars.isEmpty else { return }
+        do {
+            featuredAvatars = try await avatarManager.getFeaturedAvatars()
+        } catch {
+            print("Failed to load featured avatars: \(error)")
+        }
+    }
+    
+    private func loadPopularAvatars() async {
+        guard popularAvatars.isEmpty else { return }
+        do {
+            popularAvatars = try await avatarManager.getPopularAvatars()
+        } catch {
+            print("Failed to load popular avatars: \(error)")
+        }
+    }
+    
     private func onAvatarPressed(avatar: AvatarModel) {
         path.append(.chat(avatarID: avatar.avatarID))
     }
@@ -108,4 +146,6 @@ struct ExploreView: View {
 
 #Preview {
     ExploreView()
+        .environment(AvatarManager(service: MockAvatarService()))
+//        .environment(AvatarManager(service: FirebaseAvatarService(imageUploader: FirebaseImageUploadService())))
 }

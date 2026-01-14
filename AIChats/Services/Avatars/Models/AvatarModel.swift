@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import IdentifiableByString
 
-struct AvatarModel: Hashable, Identifiable, Codable {
+struct AvatarModel: Hashable, Identifiable, Codable, StringIdentifiable {
     var id: String { avatarID }
     let avatarID: String
     let name: String?
